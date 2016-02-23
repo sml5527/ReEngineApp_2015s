@@ -19,6 +19,11 @@ void AppClass::InitVariables(void)
 
 	//Initializing the primitives
 	m_pSphere->GenerateSphere(0.5f, 5, REWHITE);
+
+	m_m4Sphere = IDENTITY_M4;
+
+	m_m4Sphere = glm::translate(IDENTITY_M4, vector3(1, 2, 0));
+	m_m4Sphere = m_m4Sphere*glm::scale(IDENTITY_M4, vector3(2.0f, 2.0f, 2.0f));
 }
 
 void AppClass::Update(void)
