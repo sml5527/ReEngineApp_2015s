@@ -1,4 +1,5 @@
 #include "MyPrimitive.h"
+#include <math.h>
 MyPrimitive::MyPrimitive() { }
 MyPrimitive::MyPrimitive(const MyPrimitive& other) { }
 MyPrimitive& MyPrimitive::operator=(const MyPrimitive& other) { return *this; }
@@ -108,20 +109,21 @@ void MyPrimitive::GenerateCone(float a_fRadius, float a_fHeight, int a_nSubdivis
 
 	Release();
 	Init();
+	
+	vector3 baseCenter(0, 0, 0); //topCenter
+	vector3 topCenter(0, a_fHeight, 0); //2
+	//AddQuad(baseCenter, pointtopCenter, point3, point2);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		float ang = (2*PI)/ a_nSubdivisions;
+		
+		
+		vector3 point2(a_fRadius*cos(i*ang), 0, a_fRadius*sin(i*ang) ); //0
+		vector3 point3(a_fRadius*cos((i+1)*ang), 0, a_fRadius*sin((i+1)*ang)); //3
 
-	//Your code starts here
-	float fValue = 0.5f;
-	//3--2
-	//|  |
-	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+		AddQuad(topCenter, point3, point2, baseCenter);
+	}
 
-	AddQuad(point0, point1, point3, point2);
-
-	//Your code ends here
 	CompileObject(a_v3Color);
 }
 void MyPrimitive::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubdivisions, vector3 a_v3Color)
@@ -139,13 +141,29 @@ void MyPrimitive::GenerateCylinder(float a_fRadius, float a_fHeight, int a_nSubd
 	//3--2
 	//|  |
 	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+	//vector3 point0(-fValue, -fValue, fValue); //0
+	//vector3 point1(fValue, -fValue, fValue); //1
+	//vector3 point2(fValue, fValue, fValue); //2
+	//vector3 point3(-fValue, fValue, fValue); //3
+	//
+	//AddQuad(point0, point1, point3, point2);
+		vector3 point0(0, 0, 0); 
+		vector3 point1(0, a_fHeight, 0); 
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		float ang = (2 * PI) / a_nSubdivisions;
 
-	AddQuad(point0, point1, point3, point2);
+		
+		vector3 point2(a_fRadius*cos(i*ang), 0, a_fRadius*sin(i*ang)); //0
+		vector3 point3(a_fRadius*cos((i + 1)*ang), 0, a_fRadius*sin((i + 1)*ang)); //3
 
+
+		vector3 point4(a_fRadius*cos(i*ang), a_fHeight, a_fRadius*sin(i*ang)); //0
+		vector3 point5(a_fRadius*cos((i + 1)*ang), a_fHeight, a_fRadius*sin((i + 1)*ang)); //3
+
+		AddQuad(point1, point3, point2, point4);
+		AddQuad(point1, point4, point5, point3);
+	}
 	//Your code ends here
 	CompileObject(a_v3Color);
 }
@@ -159,17 +177,26 @@ void MyPrimitive::GenerateTube(float a_fOuterRadius, float a_fInnerRadius, float
 	Release();
 	Init();
 
-	//Your code starts here
-	float fValue = 0.5f;
-	//3--2
-	//|  |
-	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		float ang = (2 * PI) / a_nSubdivisions;
 
-	AddQuad(point0, point1, point3, point2);
+		vector3 point0(a_fOuterRadius*cos((i + 1)*ang), a_fHeight, a_fOuterRadius*sin((i + 1)*ang)); //1
+		vector3 point1(a_fOuterRadius*cos(i*ang), 0, a_fOuterRadius*sin(i*ang)); //2
+		vector3 point2(a_fOuterRadius*cos(i*ang), a_fHeight, a_fOuterRadius*sin(i*ang)); //0
+		vector3 point3(a_fOuterRadius*cos((i + 1)*ang), 0, a_fOuterRadius*sin((i + 1)*ang)); //3
+
+		vector3 point4(a_fInnerRadius*cos((i + 1)*ang), a_fHeight, a_fInnerRadius*sin((i + 1)*ang)); //1
+		vector3 point5(a_fInnerRadius*cos(i*ang), 0, a_fInnerRadius*sin(i*ang)); //2
+		vector3 point6(a_fInnerRadius*cos(i*ang), a_fHeight, a_fInnerRadius*sin(i*ang)); //0
+		vector3 point7(a_fInnerRadius*cos((i + 1)*ang), 0, a_fInnerRadius*sin((i + 1)*ang)); //3
+
+		AddQuad(point4, point0, point6, point2); //Top
+		AddQuad(point0, point3, point2, point1); //Outer
+		AddQuad(point7, point5, point3, point1); //Bottom
+		AddQuad(point5, point7, point6,point4 ); // Inner
+		
+	}
 
 	//Your code ends here
 	CompileObject(a_v3Color);
@@ -222,16 +249,26 @@ void MyPrimitive::GenerateSphere(float a_fRadius, int a_nSubdivisions, vector3 a
 	Init();
 
 	//Your code starts here
-	float fValue = 0.5f;
-	//3--2
-	//|  |
-	//0--1
-	vector3 point0(-fValue, -fValue, fValue); //0
-	vector3 point1(fValue, -fValue, fValue); //1
-	vector3 point2(fValue, fValue, fValue); //2
-	vector3 point3(-fValue, fValue, fValue); //3
+	float a_fHeight;
+	vector3 point0(0, 0, 0);
+	vector3 point1(0, a_fHeight, 0);
+	for (int i = 0; i < a_nSubdivisions; i++)
+	{
+		float ang = (2 * PI) / a_nSubdivisions;
 
-	AddQuad(point0, point1, point3, point2);
+
+		vector3 point2(a_fRadius*cos(i*ang), 0, a_fRadius*sin(i*ang)); //0
+		vector3 point3(a_fRadius*cos((i + 1)*ang), 0, a_fRadius*sin((i + 1)*ang)); //3
+
+
+		vector3 point4(a_fRadius*cos(i*ang), a_fHeight, a_fRadius*sin(i*ang)); //0
+		vector3 point5(a_fRadius*cos((i + 1)*ang), a_fHeight, a_fRadius*sin((i + 1)*ang)); //3
+
+		AddQuad(point1, point3, point2, point4);
+		AddQuad(point1, point4, point5, point3);
+	}
+
+
 
 	//Your code ends here
 	CompileObject(a_v3Color);
