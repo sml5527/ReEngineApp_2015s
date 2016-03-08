@@ -13,7 +13,8 @@ void AppClass::InitVariables(void)
 {
 	
 	m_pCameraMngr->SetPositionTargetAndView(vector3(0.0f, 2.5f, 12.0f), vector3(0.0f, 2.5f, 11.0f), REAXISY);
-	m_nObjects = 10;
+	srand(time(NULL));
+	m_nObjects = rand() % 23 + 5;
 	m_pSphere = new PrimitiveClass[m_nObjects];
 	m_pMatrix = new matrix4[m_nObjects];
 
