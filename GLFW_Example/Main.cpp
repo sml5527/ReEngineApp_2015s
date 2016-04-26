@@ -54,7 +54,7 @@ int main(void)
 	pMesh->AddVertexColor(glm::vec3(0.0f, 0.5f, 1.0f));
 
 	pMesh->CompileOpenGL3X();
-
+	//glEnable(GL_DEPTH_TEST);
 	do{
 
 		// Clear the screen
